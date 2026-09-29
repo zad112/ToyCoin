@@ -2,7 +2,7 @@ from toycoin.chain import Blockchain
 
 
 def make_chain(n=3):
-    bc = Blockchain()
+    bc = Blockchain(difficulty_bits=8)
     for i in range(n):
         bc.add_block(f"tx {i}")
     return bc
@@ -40,3 +40,19 @@ def test_tampering_and_rehashing_breaks_link():
     bc.chain[1].data = "evil"
     bc.chain[1].hash = bc.chain[1].compute_hash()  # attacker fixes the block's own hash
     assert not bc.is_valid()  # but the next block's previous_hash no longer matches
+
+
+def test_mined_blocks_meet_difficulty():
+    bc = make_chain()
+    for block in bc.chain[1:]:
+        assert int(block.hash, 16) >> (256 - bc.difficulty_bits) == 0
+
+
+def test_block_without_proof_of_work_is_invalid():
+    bc = make_chain(1)
+    block = bc.chain[1]
+    # Find a nonce that does NOT satisfy the difficulty, with a consistent hash.
+    while int(block.hash, 16) >> (256 - bc.difficulty_bits) == 0:
+        block.nonce += 1
+        block.hash = block.compute_hash()
+    assert not bc.is_valid()

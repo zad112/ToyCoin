@@ -4,7 +4,7 @@ Toy blockchain for learning. Python 3, standard library only (pytest for tests).
 
 ## Goal
 
-Target block time is ~30 seconds on an average CPU. Proof-of-work and difficulty tuning are added in step 2 (not yet implemented).
+Target block time is ~30 seconds on an average CPU. Step 2 added proof-of-work: difficulty is leading zero bits (`DEFAULT_DIFFICULTY_BITS` in `toycoin/chain.py`); tune with `python -m toycoin.calibrate`. Tests must use low difficulty (e.g. 8 bits) to stay fast.
 
 ## Conventions
 
